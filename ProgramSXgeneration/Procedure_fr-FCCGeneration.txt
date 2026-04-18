@@ -1,0 +1,23 @@
+#################################################
+##Steps to generate an FCC structure generation##
+################################################
+1.The first step of the program is the value of the lattice constant which 
+will be getting from the user.
+
+2.In order to generate the rotation matrix(using Euler angles),we need to get the values(in terms of angles) of psi,
+theta,phi from the user.
+
+3.After that the values will be converted to radians and the rotation matrix will be generated out of it.
+
+4.By multiplying the basis and the rotation matrix,we will get the rotated matrix
+
+5.Then the value of the size of the simulation box will be getting from the user.
+
+6.This helps to generate a cubic box of the given size.
+
+7.The coordinates that are generated from the program will be saved in xyz format("FCC.xyz")
+
+8.The xyz format that is generated which will be exported to ovito tool("visualization tool") in order to visualize the generated crystal structure.
+
+9.Thus the program is successfully generated using python and visualized the generated FCC structure using Ovito tool.
+

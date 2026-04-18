@@ -1,0 +1,14 @@
+LAMMPS (29 Sep 2021)
+#####################################################################################################################
+# Course: Theory, Modelling, and Simulation of Microstructures (TMS) - Summer semester 2021
+# Tutors: Dr. Arun Prakash, Vimal Muthusamy
+# Description: Script to determine the timestep for a given interatomic potential
+######################################################################################################################
+
+# ------------------------ VARIABLES INITIALIZATION ----------------------------
+variable i loop 6
+variable t index 0.0001 0.0005 0.001 0.002 0.005 0.01
+variable r index 10000 2000 1000 500 200 100 # No of steps for 1 ps
+
+log log.time_step_$t.lammps
+log log.time_step_0.0001.lammps

@@ -1,0 +1,87 @@
+#####################################################################################################################
+# Course: Theory, Modelling, and Simulation of Microstructures (TMS) - Summer semester 2021
+# Tutors: Dr. Arun Prakash, Vimal Muthusamy
+# Description: Finds the vacancy formation energy
+######################################################################################################################
+
+# ---------- Initialize Simulation --------------------- 
+clear 
+variable 	latt0 equal 4.05000018187522  ### provide the lattice constant from your calculation
+variable 	lblock	equal 10
+
+# ------ Define a variable for atoms id -----------
+variable        atmid equal 1    ### Which atom to delete for vacancy formation?
+
+
+units 		metal
+atom_style 	atomic
+boundary	p  p  p
+newton  	off  off
+processors	*  *  *  
+
+# ---------- Create Atoms --------------------- 
+lattice		fcc  ${latt0}  orient  x  1  0  0  orient  y  0  1  0  orient  z  0  0  1  origin  0.0    0.0    0.0
+region          sim_region  block  0  ${lblock}  0  ${lblock}  0  ${lblock}  units  lattice
+create_box      1  sim_region
+create_atoms	1  box
+
+#Provide potential
+pair_style      eam/alloy  ### TYPE OF POTENTIAL (eam (OR) eam/alloy)
+pair_coeff      *  *  /home03/nm95xule/TMS_SS2022Nan/Mishin_updated-Al-Co-2013.eam.alloy Al ### POTENTIAL FILENAME
+
+
+neighbor	2.0  bin  
+neigh_modify    delay  3
+
+
+#--------------Define Settings-------------------
+variable   	natoms equal "count(all)"
+variable   	ecoh equal "pe/v_natoms"
+variable   	latt equal "lx/v_lblock"
+variable 	teng equal "etotal"
+
+
+#-------------Run minimization---------------
+thermo_style	custom step pe etotal pxx  pyy  pzz fnorm lx  ly  lz v_ecoh v_latt
+
+thermo		10
+
+fix 		1 all box/relax iso 0.0 
+min_style       cg
+minimize        0.0 1.0e-10 10000 10000
+
+variable        N equal "count(all)"
+variable        N0 equal ${N}
+
+variable        Ei equal ${teng}
+
+
+
+#write_restart	restart.equil
+#dump		drelax  all  atom  1000 dump.atom.*
+
+#------------Deleting an atom defined by atom id ----------
+group           atomAl id ${atmid}
+delete_atoms    group atomAl
+
+fix 		1 all box/relax iso 0.0
+min_style       cg
+minimize        0.0 1.0e-10 10000 10000
+
+variable        Ef equal "etotal"
+variable        Ev equal  (${Ef}-((${N0}-1)/${N0})*${Ei})
+
+#------------- Run minimization ---------------
+#fix 		1 all box/relax iso 0.0 
+#min_style       cg
+#minimize        0.0 1.0e-10 10000 10000 
+
+
+print "Total energy (eV) = ${teng};"
+print "Number of atoms = ${natoms};"
+print "Lattice constant (Angstoms) = ${latt};"
+print "Cohesive energy (eV) = ${ecoh};"
+print "Initial energy of atoms = ${Ei};"
+print "Final  energy of atoms = ${Ef};"
+print "Vacancy formation energy = ${Ev};"
+

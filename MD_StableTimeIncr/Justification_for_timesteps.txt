@@ -1,0 +1,9 @@
+##############################################################
+######Justification for time steps converging first##########
+#############################################################
+
+1.By comparing the three graphs((time vs Temperature),(Time vs PotenialEnergy)
+,(timeVspressure)),timestep - 0.0005 has been converging first than the other timesteps.
+
+2.Thus the timestep-0.0005 has been given good results among other timesteps.
+

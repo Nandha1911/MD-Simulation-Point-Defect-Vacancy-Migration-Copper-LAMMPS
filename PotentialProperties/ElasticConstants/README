@@ -1,0 +1,15 @@
+#####################################################################################################################
+# Course: Theory, Modelling, and Simulation of Microstructures (TMS) - Summer semester 2021
+# Tutors: Dr. Arun Prakash, Vimal Muthusamy
+# Description: Finds the Elastic constants of your element
+######################################################################################################################
+
+1. Based on your chosen potential replace "???" in 'init.mod' and potential.mod. Keep these files in such a location so that they can access the potential files.
+
+2. To run use <lammps executable file> in.elastic 
+
+3. The log file will contain the information of the elastic constants at the end of the file. 
+
+4. Read the preambles of "in.elastic" and "init.mod" files. Vary the value of "up" variable in init.mod upto +/- one roder and check if the results are the same. 
+
+ 

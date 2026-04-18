@@ -1,0 +1,55 @@
+#####################################################################################################################
+# Course: Theory, Modelling, and Simulation of Microstructures (TMS) - Summer semester 2021
+# Tutors: Dr. Arun Prakash, Vimal Muthusamy
+# Description: Finds the lattice constant and cohesive energy
+######################################################################################################################
+
+# ---------- Initialize Simulation --------------------- 
+clear 
+variable 	latt0 equal 5  ### provide an approximate lattice constant of the element
+variable 	lblock	equal 10
+
+units 		metal
+atom_style 	atomic
+boundary	p  p  p
+newton  	off  off
+processors	*  *  *  
+
+# ---------- Create Atoms --------------------- 
+lattice		fcc  ${latt0}  orient  x  1  0  0  orient  y  0  1  0  orient  z  0  0  1  origin  0.0    0.0    0.0
+region          sim_region  block  0  ${lblock}  0  ${lblock}  0  ${lblock}  units  lattice
+create_box      1  sim_region
+create_atoms	1  box
+
+#Provide potential
+pair_style      eam/alloy  ### TYPE OF POTENTIAL (eam (OR) eam/alloy)
+pair_coeff      *  * /home03/nm95xule/TMS_SS2022Nan/Mishin_updated-Al-Co-2013.eam.alloy Al  ### POTENTIAL FILENAME
+
+neighbor	2.0  bin  
+neigh_modify    delay  3
+
+
+#--------------Define Settings-------------------
+variable   	natoms equal "count(all)"
+variable   	ecoh equal "pe/v_natoms"
+variable   	latt equal "lx/v_lblock"
+variable 	teng equal "etotal"
+
+thermo_style	custom step pe etotal pxx  pyy  pzz fnorm lx  ly  lz v_ecoh v_latt
+
+thermo		10
+
+#write_restart	restart.equil
+#dump		drelax  all  atom  1000 dump.atom.*
+
+#------------- Run minimization ---------------
+fix 		1 all box/relax iso 0.0 
+min_style       cg
+minimize        0.0 1.0e-10 10000 10000
+
+print "Total energy (eV) = ${teng};"
+print "Number of atoms = ${natoms};"
+print "Lattice constant (Angstoms) = ${latt};"
+print "Cohesive energy (eV) = ${ecoh};"
+
+
